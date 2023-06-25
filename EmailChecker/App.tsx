@@ -1,29 +1,40 @@
-import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, TouchableOpacity, Text, View, SafeAreaView, TextInput } from 'react-native';
 
-class App extends Component {
-  state = {
-    count: 0,
-  };
+const App = () => {
+  const [text, onChangeText] = React.useState('');
+  const [text2, onChangeText2] = React.useState('');
 
-  onPress = () => {
-    this.setState({
-      count: this.state.count + 1,
-    });
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={this.onPress}>
-          <Text>Click me</Text>
-        </TouchableOpacity>
-        <View>
-          <Text>You clicked {this.state.count} times</Text>
-        </View>
-      </View>
-    );
+  const createConfig = () => {
+    /* Function to save the chosen config for future use */
   }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.logo}>
+        <Text style={styles.title}>Check Your Email</Text>
+      </SafeAreaView>
+      <SafeAreaView style={styles.login}>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={text}
+          placeholder="Imap Email Address"
+          placeholderTextColor={'#e0a16d'}
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText2}
+          value={text2}
+          placeholder="Password"
+          placeholderTextColor={'#e0a16d'}
+        />
+      </SafeAreaView>
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.createConfig} onPress={createConfig}>Create Config</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -31,12 +42,39 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#24242e',
   },
   button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
+    width: 100,
+    height: 40,
+    backgroundColor: '#e0a16d',
     padding: 10,
+    borderRadius: 5,
+  },
+  createConfig: {
+    fontSize: 13,
+    fontFamily: 'Roboto',
+    color: '#212121',
+  },
+  logo: {
     marginBottom: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    color: '#e0a16d',
+  },
+  login: {
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    color: '#e0a16d',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#e0a16d',
+    padding: 10,
   },
 });
 
