@@ -1,13 +1,30 @@
-import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, SafeAreaView, TextInput } from 'react-native';
+import React, {Component} from 'react';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const App = () => {
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  SafeAreaView,
+  TextInput,
+} from 'react-native';
+
+type HomeScreenProps = {
+  navigation: StackNavigationProp<any, any>;
+};
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [text, onChangeText] = React.useState('');
   const [text2, onChangeText2] = React.useState('');
 
   const createConfig = () => {
     /* Function to save the chosen config for future use */
-  }
+  };
+
+  const goToNextScreen = () => {
+    navigation.navigate('Settings');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -19,23 +36,39 @@ const App = () => {
           style={styles.input}
           onChangeText={onChangeText}
           value={text}
-          placeholder="Imap Email Address"
+          placeholder="Imap Server Address"
           placeholderTextColor={'#e0a16d'}
         />
         <TextInput
           style={styles.input}
           onChangeText={onChangeText2}
           value={text2}
+          placeholder="Email address"
+          placeholderTextColor={'#e0a16d'}
+        />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText}
+          value={text}
           placeholder="Password"
           placeholderTextColor={'#e0a16d'}
         />
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeText2}
+          value={text2}
+          placeholder="Date"
+          placeholderTextColor={'#e0a16d'}
+        />
       </SafeAreaView>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.createConfig} onPress={createConfig}>Create Config</Text>
+      <TouchableOpacity style={styles.button} onPress={goToNextScreen}>
+        <Text style={styles.buttonText}>
+          Create Config
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -51,7 +84,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  createConfig: {
+  buttonText: {
     fontSize: 13,
     fontFamily: 'Roboto',
     color: '#212121',
@@ -63,12 +96,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Roboto',
     color: '#e0a16d',
+    textTransform: 'uppercase',
   },
   login: {
     marginBottom: 10,
   },
   input: {
     height: 40,
+    width: 250,
     margin: 12,
     color: '#e0a16d',
     borderWidth: 1,
@@ -78,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default HomeScreen;
