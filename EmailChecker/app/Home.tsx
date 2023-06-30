@@ -1,6 +1,7 @@
 import React, {Component, useState, useRef} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
-import SidebarMenu from './Menu';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import DrawerMenu from './Drawer';
 
 import {
   StyleSheet,
@@ -21,11 +22,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [text2, onChangeText2] = useState('');
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
 
-  const navigationView = <SidebarMenu />;
-
-  const createConfig = () => {
-    /* Function to save the chosen config for future use */
-  };
+  const navigationView = <DrawerMenu />;
 
   const goToNextScreen = () => {
     navigation.navigate('Settings');
@@ -44,50 +41,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       ref={drawerRef}
       drawerWidth={300}
       drawerPosition="left"
-      renderNavigationView={() => navigationView}
-    >
-      <SafeAreaView style={styles.container}>
-        <View style={styles.menuButtonContainer}>
-          <TouchableOpacity onPress={openDrawer}>
-            <Text>Open Menu</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.logo}>
-          <Text style={styles.title}>Check Your Email</Text>
-        </View>
-        <View style={styles.login}>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Imap Server Address"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText2}
-            value={text2}
-            placeholder="Email address"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Password"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText2}
-            value={text2}
-            placeholder="Date"
-            placeholderTextColor={'#e0a16d'}
-          />
-        </View>
-        <TouchableOpacity style={styles.button} onPress={goToNextScreen}>
-          <Text style={styles.buttonText}>Create Config</Text>
+      renderNavigationView={() => navigationView}>
+      <View style={styles.drawerOutContainer}>
+        <TouchableOpacity style={styles.drawerInContainer} onPress={openDrawer}>
+          <Icon name="bars" size={30} color="#e0a16d" />
         </TouchableOpacity>
+        <Text style={styles.drawerText}>Presets</Text>
+        <View style={styles.activePreset}>
+          <Text style={styles.apText}>AP</Text>
+        </View>
+      </View>
+      <SafeAreaView style={styles.container}>
+       
       </SafeAreaView>
     </DrawerLayoutAndroid>
   );
@@ -134,8 +99,35 @@ const styles = StyleSheet.create({
     borderColor: '#e0a16d',
     padding: 10,
   },
-  menuButtonContainer: {
+  drawerOutContainer: {
+    backgroundColor: '#24242e',
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
+  },
+  drawerInContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  drawerText: {
+    flex: 1,
+    paddingLeft: 10,
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    color: '#e0a16d',
+  },
+  activePreset: {
+    width: 40,
+    alignContent: 'center',
+    backgroundColor: '#e0a16d',
+    borderRadius: 5,
+    padding: 5,
+  },
+  apText: {
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    color: '#22222e',
+    textAlign: 'center',
   },
 });
 
