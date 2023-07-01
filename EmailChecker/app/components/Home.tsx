@@ -11,22 +11,53 @@ import {
   SafeAreaView,
   TextInput,
   DrawerLayoutAndroid,
+  FlatList,
+  StatusBar,
+  Dimensions,
 } from 'react-native';
+
+// Dimensions of the screen
+const {width, height} = Dimensions.get('window');
+const itemWidth = width * 0.9;
 
 type HomeScreenProps = {
   navigation: StackNavigationProp<any, any>;
 };
 
+type ItemProps = {
+  title: string;
+  subtitle: string;
+};
+
+const DATA = [
+  {
+    id: 'mprs0',
+    title: 'Google Mail',
+    subtitle: 'imap.gmail.com',
+  },
+  {
+    id: 'mprs1',
+    title: 'PSK Mail',
+    subtitle: 'imap.psk.edu.my',
+  },
+  {
+    id: 'mprs2',
+    title: 'Yahoo Mail',
+    subtitle: 'imap.mail.yahoo.com',
+  },
+];
+
+const Item = ({title, subtitle}: ItemProps) => (
+  <TouchableOpacity style={styles.item}>
+    <Text style={styles.itemTitle}>{title}</Text>
+    <Text style={styles.itemTitle}>{subtitle}</Text>
+  </TouchableOpacity>
+);
+
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const [text, onChangeText] = useState('');
-  const [text2, onChangeText2] = useState('');
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
 
-  const navigationView = <DrawerMenu />;
-
-  const goToNextScreen = () => {
-    navigation.navigate('Settings');
-  };
+  const navigationView = <DrawerMenu navigation={navigation}/>;
 
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
@@ -47,12 +78,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           <Icon name="bars" size={30} color="#e0a16d" />
         </TouchableOpacity>
         <Text style={styles.drawerText}>Presets</Text>
-        <View style={styles.activePreset}>
+        <TouchableOpacity style={styles.activePreset}>
           <Text style={styles.apText}>AP</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       <SafeAreaView style={styles.container}>
-       
+        <FlatList
+          data={DATA}
+          renderItem={({item}) => (
+            <Item title={item.title} subtitle={item.subtitle} />
+          )}
+          keyExtractor={item => item.id}
+        />
       </SafeAreaView>
     </DrawerLayoutAndroid>
   );
@@ -103,6 +140,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#24242e',
     flexDirection: 'row',
     alignItems: 'center',
+    borderBottomColor: 'rgba(224, 161, 109, 0.5)',
+    borderBottomWidth: 1,
     padding: 10,
   },
   drawerInContainer: {
@@ -128,6 +167,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     color: '#22222e',
     textAlign: 'center',
+  },
+  item: {
+    width: itemWidth,
+    padding: 20,
+    marginVertical: 5,
+    marginHorizontal: 10,
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#e0a16d',
+  },
+  itemTitle: {
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    color: '#e0a16d',
   },
 });
 
