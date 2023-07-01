@@ -14,9 +14,9 @@ import {
   FlatList,
   StatusBar,
   Dimensions,
+  Platform,
 } from 'react-native';
 
-// Dimensions of the screen
 const {width, height} = Dimensions.get('window');
 const itemWidth = width * 0.9;
 
@@ -57,7 +57,7 @@ const Item = ({title, subtitle}: ItemProps) => (
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
 
-  const navigationView = <DrawerMenu navigation={navigation}/>;
+  const navigationView = <DrawerMenu navigation={navigation} />;
 
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
@@ -67,32 +67,51 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     drawerRef.current?.closeDrawer();
   };
 
-  return (
-    <DrawerLayoutAndroid
-      ref={drawerRef}
-      drawerWidth={300}
-      drawerPosition="left"
-      renderNavigationView={() => navigationView}>
-      <View style={styles.drawerOutContainer}>
-        <TouchableOpacity style={styles.drawerInContainer} onPress={openDrawer}>
-          <Icon name="bars" size={30} color="#e0a16d" />
-        </TouchableOpacity>
-        <Text style={styles.drawerText}>Presets</Text>
-        <TouchableOpacity style={styles.activePreset}>
-          <Text style={styles.apText}>AP</Text>
-        </TouchableOpacity>
-      </View>
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          data={DATA}
-          renderItem={({item}) => (
-            <Item title={item.title} subtitle={item.subtitle} />
-          )}
-          keyExtractor={item => item.id}
-        />
-      </SafeAreaView>
-    </DrawerLayoutAndroid>
-  );
+  const mainScreen = () => {
+    return (
+      <DrawerLayoutAndroid
+        ref={drawerRef}
+        drawerWidth={300}
+        drawerPosition="left"
+        renderNavigationView={() => navigationView}>
+        <View style={styles.drawerOutContainer}>
+          <TouchableOpacity
+            style={styles.drawerInContainer}
+            onPress={openDrawer}>
+            <Icon name="bars" size={30} color="#e0a16d" />
+          </TouchableOpacity>
+          <Text style={styles.drawerText}>Presets</Text>
+          <TouchableOpacity style={styles.activePreset}>
+            <Text style={styles.apText}>AP</Text>
+          </TouchableOpacity>
+        </View>
+        <SafeAreaView style={styles.container}>
+          <FlatList
+            data={DATA}
+            renderItem={({item}) => (
+              <Item title={item.title} subtitle={item.subtitle} />
+            )}
+            keyExtractor={item => item.id}
+          />
+        </SafeAreaView>
+      </DrawerLayoutAndroid>
+    );
+  };
+
+  if (Platform.OS === 'ios') {
+    // WIP
+    return <Text>Running on iOS</Text>;
+  } else if (Platform.OS === 'android') {
+    return (
+      <DrawerLayoutAndroid
+        ref={drawerRef}
+        drawerWidth={300}
+        drawerPosition="left"
+        renderNavigationView={() => navigationView}>
+        {mainScreen()}
+      </DrawerLayoutAndroid>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

@@ -12,7 +12,12 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator
+        initialRouteName="Home"
+        // screenOptions={{
+        //   animationEnabled: false,
+        // }}
+        >
         <Stack.Screen
           options={{headerShown: false}}
           name="Home"
@@ -32,11 +37,6 @@ const App = () => {
           options={{headerShown: false}}
           name="About"
           component={AboutScreen}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Drawer"
-          component={DrawerMenu}
         />
       </Stack.Navigator>
     </NavigationContainer>
