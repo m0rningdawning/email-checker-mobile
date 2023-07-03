@@ -49,8 +49,13 @@ const DATA = [
 
 const Item = ({title, subtitle}: ItemProps) => (
   <TouchableOpacity style={styles.item}>
-    <Text style={styles.itemTitle}>{title}</Text>
-    <Text style={styles.itemTitle}>{subtitle}</Text>
+    <View>
+      <Text style={styles.itemTitle}>{title}</Text>
+      <Text style={styles.itemTitle}>{subtitle}</Text>
+    </View>
+    <View style={styles.itemIcon}>
+      <Icon name="ellipsis-v" size={30} color="#e0a16d"/>
+    </View>
   </TouchableOpacity>
 );
 
@@ -189,6 +194,7 @@ const styles = StyleSheet.create({
   },
   item: {
     width: itemWidth,
+    flexDirection: 'row',
     padding: 20,
     marginVertical: 5,
     marginHorizontal: 10,
@@ -199,6 +205,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Roboto',
     color: '#e0a16d',
+  },
+  itemIcon: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
 });
 

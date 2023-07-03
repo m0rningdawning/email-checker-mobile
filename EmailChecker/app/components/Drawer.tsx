@@ -1,8 +1,12 @@
 import React, {useRef} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {TouchEventType} from 'react-native-gesture-handler/lib/typescript/TouchEventType';
 import {StackNavigationProp} from '@react-navigation/stack';
+
+const {width, height} = Dimensions.get('window');
+const itemWidth = width * 0.9;
 
 type DrawerMenuProps = {
   navigation: StackNavigationProp<any, any>;
@@ -35,17 +39,29 @@ const DrawerMenu = ({navigation}: DrawerMenuProps) => {
 
   return (
     <View style={styles.menuButtonContainer}>
-      <TouchableOpacity onPress={() => navigate(1)}>
-        <Text>Home</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigate(1)}>
+        <View style = {styles.icon}>
+          <Icon name="home" size={30} color="#a0724d" />
+        </View>
+        <Text style={styles.buttonText}>Home</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigate(2)}>
-        <Text>Create Config</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigate(2)}>
+        <View style = {styles.icon}>
+        <Icon name="pencil" size={30} color="#a0724d" />
+        </View>
+        <Text style={styles.buttonText}>Create Config</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigate(3)}>
-        <Text>Settings</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigate(3)}>
+        <View style = {styles.icon}>
+        <Icon name="gear" size={30} color="#a0724d" />
+        </View>
+        <Text style={styles.buttonText}>Settings</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigate(4)}>
-        <Text>About</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigate(4)}>
+        <View style = {styles.icon}>
+        <Icon name="question" size={30} color="#a0724d" />
+        </View>
+        <Text style={styles.buttonText}>About</Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,7 +71,26 @@ const styles = StyleSheet.create({
   menuButtonContainer: {
     flex: 1,
     backgroundColor: '#a0724d',
+    padding: 8,
+  },
+  button: {
+    backgroundColor: '#22222e',
     padding: 10,
+    margin: 5,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  buttonText: {
+    color: '#a0724d',
+    fontSize: 20,
+    marginLeft: 10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
