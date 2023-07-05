@@ -68,7 +68,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     drawerRef.current?.openDrawer();
   };
 
-  const closeDrawer = () => {
+  function closeDrawer(){
     drawerRef.current?.closeDrawer();
   };
 

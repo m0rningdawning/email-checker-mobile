@@ -13,11 +13,30 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Home"
-        // screenOptions={{
-        //   animationEnabled: false,
-        // }}
-        >
+        screenOptions={{
+          headerShown: false,
+          cardStyle: {backgroundColor: '#fff'},
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          transitionSpec: {
+            open: {animation: 'timing', config: {duration: 200}},
+            close: {animation: 'timing', config: {duration: 200}},
+          },
+          cardStyleInterpolator: ({current, layouts}) => {
+            return {
+              cardStyle: {
+                transform: [
+                  {
+                    translateX: current.progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [layouts.screen.width, 0],
+                    }),
+                  },
+                ],
+              },
+            };
+          },
+        }}>
         <Stack.Screen
           options={{headerShown: false}}
           name="Home"
