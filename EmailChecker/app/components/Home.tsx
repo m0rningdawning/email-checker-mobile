@@ -1,5 +1,6 @@
 import React, {Component, useState, useRef} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DrawerMenu from './Drawer';
 
@@ -54,7 +55,7 @@ const Item = ({title, subtitle}: ItemProps) => (
       <Text style={styles.itemTitle}>{subtitle}</Text>
     </View>
     <View style={styles.itemIcon}>
-      <Icon name="ellipsis-v" size={30} color="#e0a16d"/>
+      <Icon name="ellipsis-v" size={30} color="#e0a16d" />
     </View>
   </TouchableOpacity>
 );
@@ -64,13 +65,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const navigationView = <DrawerMenu navigation={navigation} />;
 
+  const route = useRoute();
+  const credentials = route.params;
+
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
   };
 
-  function closeDrawer(){
+  function closeDrawer() {
     drawerRef.current?.closeDrawer();
-  };
+  }
 
   const mainScreen = () => {
     return (
@@ -99,6 +103,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             keyExtractor={item => item.id}
           />
         </SafeAreaView>
+        <View style={styles.addButtonOut}>
+          <TouchableOpacity style={styles.addButtonIn}>
+            {/* <Text style={styles.addButtonText}>+</Text> */}
+            <Icon name="plus-square-o" size={30} color="#22222e" />
+          </TouchableOpacity>
+        </View>
       </DrawerLayoutAndroid>
     );
   };
@@ -210,6 +220,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'flex-end',
+  },
+  addButtonOut: {
+    position: 'absolute',
+    bottom: 25,
+    right: 25,
+  },
+  addButtonIn: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#e0a16d',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    fontSize: 40,
+    fontFamily: 'Roboto',
+    color: '#22222e',
   },
 });
 

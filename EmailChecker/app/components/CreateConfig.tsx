@@ -1,7 +1,9 @@
 import React, {Component, useState, useRef} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerMenu from './Drawer';
+import ConfigForm from './ConfigFrom';
 
 import {
   StyleSheet,
@@ -15,6 +17,7 @@ import {
 
 type ConfScreenProps = {
   navigation: StackNavigationProp<any, any>;
+  route: any;
 };
 
 const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
@@ -36,6 +39,20 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
     drawerRef.current?.closeDrawer();
   };
 
+  const saveCredentials = async (credentials: any) => {
+    try {
+      // Convert the credentials object to a JSON string
+      const credentialsString = JSON.stringify(credentials);
+
+      // Save the credentials string to AsyncStorage
+      await AsyncStorage.setItem('userCredentials', credentialsString);
+
+      console.log('Credentials saved successfully!');
+    } catch (error) {
+      console.log('Error saving credentials:', error);
+    }
+  };
+
   return (
     <DrawerLayoutAndroid
       ref={drawerRef}
@@ -55,39 +72,16 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
         <View style={styles.logo}>
           <Text style={styles.title}>Check Your Email</Text>
         </View>
-        <View style={styles.credentials}>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Imap Server Address"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText2}
-            value={text2}
-            placeholder="Email address"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText}
-            value={text}
-            placeholder="Password"
-            placeholderTextColor={'#e0a16d'}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeText2}
-            value={text2}
-            placeholder="Date"
-            placeholderTextColor={'#e0a16d'}
-          />
-        </View>
-        <TouchableOpacity style={styles.button} onPress={goToNextScreen}>
-          <Text style={styles.buttonText}>Create Config</Text>
-        </TouchableOpacity>
+        <ConfigForm
+          onSaveConfig={function (credentials: {
+            imap: string;
+            password: string;
+            email: string;
+            date: string;
+          }): void {
+            throw new Error('Function not implemented.');
+          }}
+        />
       </SafeAreaView>
     </DrawerLayoutAndroid>
   );
@@ -99,18 +93,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#24242e',
-  },
-  button: {
-    width: 100,
-    height: 40,
-    backgroundColor: '#e0a16d',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    fontSize: 13,
-    fontFamily: 'Roboto',
-    color: '#212121',
   },
   logo: {
     marginBottom: 10,
