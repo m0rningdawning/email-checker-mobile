@@ -3,7 +3,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerMenu from './Drawer';
-import ConfigForm from './ConfigFrom';
+import ConfigForm from './ConfigForm';
 
 import {
   StyleSheet,
@@ -80,7 +80,7 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
         <TouchableOpacity style={styles.drawerInContainer} onPress={openDrawer}>
           <Icon name="bars" size={30} color="#e0a16d" />
         </TouchableOpacity>
-        <Text style={styles.drawerText}>Presets</Text>
+        <Text style={styles.drawerText}>Create</Text>
         <TouchableOpacity style={styles.activePreset}>
           <Text style={styles.apText}>AP</Text>
         </TouchableOpacity>

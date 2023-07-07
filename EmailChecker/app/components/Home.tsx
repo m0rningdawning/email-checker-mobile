@@ -55,6 +55,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const navigationView = <DrawerMenu navigation={navigation} />;
 
   const [credentials, setCredentials] = useState([]);
+  const [isStorageEmpty, setIsStorageEmpty] = useState<boolean | undefined>(
+    undefined,
+  );
 
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
@@ -64,10 +67,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     drawerRef.current?.closeDrawer();
   }
 
-  const goToCreateCfg = () => {
+  const goToScreen = (name: string) => {
     navigation.reset({
       index: 0,
-      routes: [{name: 'CreateConfig'}],
+      routes: [{name: name}],
     });
   };
 
@@ -89,6 +92,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     fetchCredentials();
   }, []);
 
+  useEffect(() => {
+    const checkStorageStatus = async () => {
+      try {
+        const keys = await AsyncStorage.getAllKeys();
+        setIsStorageEmpty(keys.length === 0);
+      } catch (error) {
+        console.log('Error checking AsyncStorage:', error);
+        setIsStorageEmpty(true);
+      }
+    };
+
+    checkStorageStatus();
+  }, []);
+
   const removeCredentials = async (credentialId: any) => {
     try {
       const storedCredentialsString = await AsyncStorage.getItem(
@@ -97,20 +114,83 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       const storedCredentials = storedCredentialsString
         ? JSON.parse(storedCredentialsString)
         : [];
-
+  
       const updatedCredentials = storedCredentials.filter(
-        (credential: {id: any}) => credential.id !== credentialId,
+        (credential: { id: any }) => credential.id !== credentialId
       );
-
+  
       const updatedCredentialsString = JSON.stringify(updatedCredentials);
-
+  
       await AsyncStorage.setItem('userCredentials', updatedCredentialsString);
-
+  
       console.log('Credential removed successfully!');
+  
+
+      if (storedCredentials.length === 1) {
+        clearAsyncStorage();
+        goToScreen("Home");
+      }
 
       setCredentials(updatedCredentials);
     } catch (error) {
       console.log('Error removing credential:', error);
+    }
+  };
+  
+
+  const clearAsyncStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log('AsyncStorage cleared successfully!');
+    } catch (error) {
+      console.log('Error clearing AsyncStorage:', error);
+    }
+  };
+
+  const list = () => {
+    return (
+      <FlatList
+        data={credentials}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => (
+          <Item
+            imap={item.imap}
+            email={item.email}
+            removeCredentials={() => removeCredentials(item.id)}
+          />
+        )}
+        // keyExtractor={item => item.id}
+      />
+    );
+  };
+
+  const noList = () => {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.titleNoList}>No presets found</Text>
+        <Text style={styles.titleNoList}>Create one</Text>
+        <TouchableOpacity style={styles.addButtonIn} onPress={() => goToScreen("CreateConfig")}>
+          {/* <Text style={styles.addButtonText}>+</Text> */}
+          <Icon name="plus-square-o" size={30} color="#22222e" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const plusButton = () => {
+    return (
+      <View style={styles.addButtonOut}>
+        <TouchableOpacity style={styles.addButtonIn} onPress={() => goToScreen("CreateConfig")}>
+          {/* <Text style={styles.addButtonText}>+</Text> */}
+          <Icon name="plus-square-o" size={30} color="#22222e" />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const checkButton = () => {
+    if (!isStorageEmpty) {
+      return plusButton();
     }
   };
 
@@ -127,31 +207,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             onPress={openDrawer}>
             <Icon name="bars" size={30} color="#e0a16d" />
           </TouchableOpacity>
-          <Text style={styles.drawerText}>Presets</Text>
+          <Text style={styles.drawerText}>Home</Text>
           <TouchableOpacity style={styles.activePreset}>
             <Text style={styles.apText}>AP</Text>
           </TouchableOpacity>
         </View>
         <SafeAreaView style={styles.container}>
-          <FlatList
-            data={credentials}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({item}) => (
-              <Item
-                imap={item.imap}
-                email={item.email}
-                removeCredentials={() => removeCredentials(item.id)}
-              />
-            )}
-            // keyExtractor={item => item.id}
-          />
+          {isStorageEmpty === undefined
+            ? null
+            : isStorageEmpty
+            ? noList()
+            : list()}
         </SafeAreaView>
-        <View style={styles.addButtonOut}>
-          <TouchableOpacity style={styles.addButtonIn} onPress={goToCreateCfg}>
-            {/* <Text style={styles.addButtonText}>+</Text> */}
-            <Icon name="plus-square-o" size={30} color="#22222e" />
-          </TouchableOpacity>
-        </View>
+        {checkButton()}
       </DrawerLayoutAndroid>
     );
   };
@@ -199,6 +267,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     color: '#e0a16d',
     textTransform: 'uppercase',
+  },
+  titleNoList: {
+    fontSize: 20,
+    fontFamily: 'Roboto',
+    color: '#e0a16d',
+    textTransform: 'uppercase',
+    marginBottom: 5,
   },
   login: {
     marginBottom: 10,
