@@ -1,7 +1,8 @@
-import React, {Component, useState, useRef} from 'react';
+import React, {Component, useState, useRef, useEffect} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerMenu from './Drawer';
 
 import {
@@ -26,36 +27,24 @@ type HomeScreenProps = {
 };
 
 type ItemProps = {
-  title: string;
-  subtitle: string;
+  imap: string;
+  email: string;
+  removeCredentials: () => void;
 };
 
-const DATA = [
-  {
-    id: 'mprs0',
-    title: 'Google Mail',
-    subtitle: 'imap.gmail.com',
-  },
-  {
-    id: 'mprs1',
-    title: 'PSK Mail',
-    subtitle: 'imap.psk.edu.my',
-  },
-  {
-    id: 'mprs2',
-    title: 'Yahoo Mail',
-    subtitle: 'imap.mail.yahoo.com',
-  },
-];
-
-const Item = ({title, subtitle}: ItemProps) => (
+const Item = ({imap, email, removeCredentials}: ItemProps) => (
   <TouchableOpacity style={styles.item}>
     <View>
-      <Text style={styles.itemTitle}>{title}</Text>
-      <Text style={styles.itemTitle}>{subtitle}</Text>
+      <Text style={styles.itemTitle}>{imap}</Text>
+      <Text style={styles.itemTitle}>{email}</Text>
     </View>
     <View style={styles.itemIcon}>
-      <Icon name="ellipsis-v" size={30} color="#e0a16d" />
+      <Icon
+        name="ellipsis-v"
+        size={30}
+        color="#e0a16d"
+        onPress={removeCredentials}
+      />
     </View>
   </TouchableOpacity>
 );
@@ -65,8 +54,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const navigationView = <DrawerMenu navigation={navigation} />;
 
-  const route = useRoute();
-  const credentials = route.params;
+  const [credentials, setCredentials] = useState([]);
 
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
@@ -75,6 +63,56 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   function closeDrawer() {
     drawerRef.current?.closeDrawer();
   }
+
+  const goToCreateCfg = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'CreateConfig'}],
+    });
+  };
+
+  useEffect(() => {
+    const fetchCredentials = async () => {
+      try {
+        const storedCredentialsString = await AsyncStorage.getItem(
+          'userCredentials',
+        );
+
+        if (storedCredentialsString) {
+          const storedCredentials = JSON.parse(storedCredentialsString);
+          setCredentials(storedCredentials);
+        }
+      } catch (error) {
+        console.log('Error fetching credentials:', error);
+      }
+    };
+    fetchCredentials();
+  }, []);
+
+  const removeCredentials = async (credentialId: any) => {
+    try {
+      const storedCredentialsString = await AsyncStorage.getItem(
+        'userCredentials',
+      );
+      const storedCredentials = storedCredentialsString
+        ? JSON.parse(storedCredentialsString)
+        : [];
+
+      const updatedCredentials = storedCredentials.filter(
+        (credential: {id: any}) => credential.id !== credentialId,
+      );
+
+      const updatedCredentialsString = JSON.stringify(updatedCredentials);
+
+      await AsyncStorage.setItem('userCredentials', updatedCredentialsString);
+
+      console.log('Credential removed successfully!');
+
+      setCredentials(updatedCredentials);
+    } catch (error) {
+      console.log('Error removing credential:', error);
+    }
+  };
 
   const mainScreen = () => {
     return (
@@ -96,15 +134,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
         </View>
         <SafeAreaView style={styles.container}>
           <FlatList
-            data={DATA}
+            data={credentials}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              <Item title={item.title} subtitle={item.subtitle} />
+              <Item
+                imap={item.imap}
+                email={item.email}
+                removeCredentials={() => removeCredentials(item.id)}
+              />
             )}
-            keyExtractor={item => item.id}
+            // keyExtractor={item => item.id}
           />
         </SafeAreaView>
         <View style={styles.addButtonOut}>
-          <TouchableOpacity style={styles.addButtonIn}>
+          <TouchableOpacity style={styles.addButtonIn} onPress={goToCreateCfg}>
             {/* <Text style={styles.addButtonText}>+</Text> */}
             <Icon name="plus-square-o" size={30} color="#22222e" />
           </TouchableOpacity>

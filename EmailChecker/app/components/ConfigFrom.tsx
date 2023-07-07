@@ -66,7 +66,7 @@ function ConfigForm({onSaveConfig}: ConfigFormProps) {
         placeholderTextColor={'#e0a16d'}
       />
       <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Create Config</Text>
+        <Text style={styles.buttonText}>Save</Text>
       </TouchableOpacity>
     </View>
   );
@@ -92,13 +92,17 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 12,
     backgroundColor: '#e0a16d',
-    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 5,
   },
   buttonText: {
-    fontSize: 13,
+    fontSize: 16,
     fontFamily: 'Roboto',
     color: '#212121',
+    margin: 0,
+    padding: 0,
+    textTransform: 'uppercase',
   },
 });
 

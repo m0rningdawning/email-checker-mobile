@@ -11,7 +11,6 @@ import {
   Text,
   View,
   SafeAreaView,
-  TextInput,
   DrawerLayoutAndroid,
 } from 'react-native';
 
@@ -27,10 +26,6 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
 
   const navigationView = <DrawerMenu navigation={navigation} />;
 
-  const goToNextScreen = () => {
-    navigation.navigate('Settings');
-  };
-
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
   };
@@ -41,13 +36,35 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
 
   const saveCredentials = async (credentials: any) => {
     try {
-      // Convert the credentials object to a JSON string
-      const credentialsString = JSON.stringify(credentials);
+      if (
+        !credentials.email ||
+        !credentials.password ||
+        !credentials.imap ||
+        !credentials.date
+      ) {
+        console.log('Cannot save empty preset');
+        return;
+      }
 
-      // Save the credentials string to AsyncStorage
-      await AsyncStorage.setItem('userCredentials', credentialsString);
+      const credentialId = Date.now().toString();
+
+      const credentialWithId = {...credentials, id: credentialId};
+
+      const storedCredentialsString = await AsyncStorage.getItem(
+        'userCredentials',
+      );
+      const storedCredentials = storedCredentialsString
+        ? JSON.parse(storedCredentialsString)
+        : [];
+
+      const updatedCredentials = [...storedCredentials, credentialWithId];
+
+      const updatedCredentialsString = JSON.stringify(updatedCredentials);
+
+      await AsyncStorage.setItem('userCredentials', updatedCredentialsString);
 
       console.log('Credentials saved successfully!');
+      navigation.navigate('Home');
     } catch (error) {
       console.log('Error saving credentials:', error);
     }
@@ -70,18 +87,9 @@ const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
       </View>
       <SafeAreaView style={styles.container}>
         <View style={styles.logo}>
-          <Text style={styles.title}>Check Your Email</Text>
+          <Text style={styles.title}>Create Configuration</Text>
         </View>
-        <ConfigForm
-          onSaveConfig={function (credentials: {
-            imap: string;
-            password: string;
-            email: string;
-            date: string;
-          }): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
+        <ConfigForm onSaveConfig={saveCredentials} />
       </SafeAreaView>
     </DrawerLayoutAndroid>
   );
