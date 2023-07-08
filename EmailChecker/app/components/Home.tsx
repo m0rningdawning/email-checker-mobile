@@ -11,10 +11,8 @@ import {
   Text,
   View,
   SafeAreaView,
-  TextInput,
   DrawerLayoutAndroid,
   FlatList,
-  StatusBar,
   Dimensions,
   Platform,
 } from 'react-native';

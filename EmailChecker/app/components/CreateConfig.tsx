@@ -1,4 +1,4 @@
-import React, {Component, useState, useRef} from 'react';
+import React, {useRef} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,8 +20,6 @@ type ConfScreenProps = {
 };
 
 const CreateConfigScreen: React.FC<ConfScreenProps> = ({navigation}) => {
-  const [text, onChangeText] = useState('');
-  const [text2, onChangeText2] = useState('');
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
 
   const navigationView = <DrawerMenu navigation={navigation} />;

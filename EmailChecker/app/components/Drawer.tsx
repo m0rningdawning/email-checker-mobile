@@ -6,9 +6,6 @@ import {TouchEventType} from 'react-native-gesture-handler/lib/typescript/TouchE
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useRoute} from '@react-navigation/native';
 
-const {width, height} = Dimensions.get('window');
-const itemWidth = width * 0.9;
-
 type DrawerMenuProps = {
   navigation: StackNavigationProp<any, any>;
 };
