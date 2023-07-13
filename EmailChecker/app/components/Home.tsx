@@ -3,7 +3,14 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  MCOIMAPMessage,
+  MCOIMAPSession,
+  MCOIMAPMessagesRequestKind,
+} from 'react-native-mailcore';
+import NetInfo from '@react-native-community/netinfo';
 import DrawerMenu from './Drawer';
+import {fetchEmails} from '../ImapClient.js';
 
 import {
   StyleSheet,
@@ -28,10 +35,17 @@ type ItemProps = {
   imap: string;
   email: string;
   removeCredentials: () => void;
+  onPress: () => void;
 };
 
-const Item = ({imap, email, removeCredentials}: ItemProps) => (
-  <TouchableOpacity style={styles.item}>
+interface Credentials {
+  imap: string;
+  email: string;
+  password: string;
+}
+
+const Item = ({ imap, email, removeCredentials, onPress }: ItemProps) => (
+  <TouchableOpacity style={styles.item} onPress={onPress}>
     <View>
       <Text style={styles.itemTitle}>{imap}</Text>
       <Text style={styles.itemTitle}>{email}</Text>
@@ -56,14 +70,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [isStorageEmpty, setIsStorageEmpty] = useState<boolean | undefined>(
     undefined,
   );
-
+  
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
   };
 
-  function closeDrawer() {
+  const closeDrawer = () => {
     drawerRef.current?.closeDrawer();
-  }
+  };
+
+  const handleEmailPress = (credentials: Credentials) => {
+    navigation.navigate('MailList', {credentials});
+  };
 
   const goToScreen = (name: string) => {
     navigation.reset({
@@ -112,21 +130,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       const storedCredentials = storedCredentialsString
         ? JSON.parse(storedCredentialsString)
         : [];
-  
+
       const updatedCredentials = storedCredentials.filter(
-        (credential: { id: any }) => credential.id !== credentialId
+        (credential: {id: any}) => credential.id !== credentialId,
       );
-  
+
       const updatedCredentialsString = JSON.stringify(updatedCredentials);
-  
+
       await AsyncStorage.setItem('userCredentials', updatedCredentialsString);
-  
+
       console.log('Credential removed successfully!');
-  
 
       if (storedCredentials.length === 1) {
         clearAsyncStorage();
-        goToScreen("Home");
+        goToScreen('Home');
       }
 
       setCredentials(updatedCredentials);
@@ -134,7 +151,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       console.log('Error removing credential:', error);
     }
   };
-  
 
   const clearAsyncStorage = async () => {
     try {
@@ -155,6 +171,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             imap={item.imap}
             email={item.email}
             removeCredentials={() => removeCredentials(item.id)}
+            onPress={() => handleEmailPress(item)}
           />
         )}
         // keyExtractor={item => item.id}
@@ -167,7 +184,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       <View style={styles.container}>
         <Text style={styles.titleNoList}>No presets found</Text>
         <Text style={styles.titleNoList}>Create one</Text>
-        <TouchableOpacity style={styles.addButtonIn} onPress={() => goToScreen("CreateConfig")}>
+        <TouchableOpacity
+          style={styles.addButtonIn}
+          onPress={() => goToScreen('CreateConfig')}>
           {/* <Text style={styles.addButtonText}>+</Text> */}
           <Icon name="plus-square-o" size={30} color="#22222e" />
         </TouchableOpacity>
@@ -178,7 +197,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const plusButton = () => {
     return (
       <View style={styles.addButtonOut}>
-        <TouchableOpacity style={styles.addButtonIn} onPress={() => goToScreen("CreateConfig")}>
+        <TouchableOpacity
+          style={styles.addButtonIn}
+          onPress={() => goToScreen('CreateConfig')}>
           {/* <Text style={styles.addButtonText}>+</Text> */}
           <Icon name="plus-square-o" size={30} color="#22222e" />
         </TouchableOpacity>

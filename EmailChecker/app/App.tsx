@@ -6,6 +6,7 @@ import SettingScreen from './components/Settings';
 import AboutScreen from './components/About';
 import CreateConfigScreen from './components/CreateConfig';
 import DrawerMenu from './components/Drawer';
+import MailListScreen from './components/MailList';
 
 const Stack = createStackNavigator();
 
@@ -56,6 +57,11 @@ const App = () => {
           options={{headerShown: false}}
           name="About"
           component={AboutScreen}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="MailList"
+          component={MailListScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
