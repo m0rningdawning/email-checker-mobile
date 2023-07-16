@@ -3,18 +3,21 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  MCOIMAPMessage,
-  MCOIMAPSession,
-  MCOIMAPMessagesRequestKind,
-} from 'react-native-mailcore';
 import NetInfo from '@react-native-community/netinfo';
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+  MenuProvider,
+} from 'react-native-popup-menu';
 import DrawerMenu from './Drawer';
 import {fetchEmails} from '../ImapClient.js';
 
 import {
   StyleSheet,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Text,
   View,
   SafeAreaView,
@@ -44,33 +47,58 @@ interface Credentials {
   password: string;
 }
 
-const Item = ({ imap, email, removeCredentials, onPress }: ItemProps) => (
-  <TouchableOpacity style={styles.item} onPress={onPress}>
-    <View>
-      <Text style={styles.itemTitle}>{imap}</Text>
-      <Text style={styles.itemTitle}>{email}</Text>
-    </View>
-    <View style={styles.itemIcon}>
-      <Icon
-        name="ellipsis-v"
-        size={30}
-        color="#e0a16d"
-        onPress={removeCredentials}
-      />
-    </View>
-  </TouchableOpacity>
-);
+const Item = ({imap, email, removeCredentials, onPress}: ItemProps) => {
+  const [isMenuVisible, setMenuVisible] = useState(false);
+  const menuRef = useRef<Menu>(null);
+
+  const openMenu = () => {
+    setMenuVisible(true);
+  };
+
+  const closeMenu = () => {
+    setMenuVisible(false);
+  };
+
+  return (
+    <MenuProvider skipInstanceCheck>
+      <TouchableWithoutFeedback onPress={closeMenu}>
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.item} onPress={onPress}>
+            <View>
+              <Text style={styles.itemTitle}>{imap}</Text>
+              <Text style={styles.itemTitle}>{email}</Text>
+            </View>
+            <Menu ref={menuRef} onOpen={openMenu} onClose={closeMenu}>
+              
+              <MenuTrigger customStyles={menuTriggerStyles}>
+                <TouchableOpacity
+                  style={styles.iconArea}
+                  onPress={() => menuRef.current?.open()}>
+                  <Icon name="ellipsis-v" size={30} color="#e0a16d" />
+                </TouchableOpacity>
+              </MenuTrigger>
+              <MenuOptions customStyles={menuOptionsStyles}>
+                <MenuOption onSelect={removeCredentials} text="Modify" />
+                <MenuOption onSelect={removeCredentials} text="Remove" />
+              </MenuOptions>
+            </Menu>
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
+    </MenuProvider>
+  );
+};
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
 
   const navigationView = <DrawerMenu navigation={navigation} />;
 
-  const [credentials, setCredentials] = useState([]);
+  const [credentials, setCredentials] = useState<any[]>([]);
   const [isStorageEmpty, setIsStorageEmpty] = useState<boolean | undefined>(
     undefined,
   );
-  
+
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
   };
@@ -347,6 +375,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderBottomWidth: 1.5,
     borderBottomColor: '#e0a16d',
+    justifyContent: 'space-between',
   },
   itemTitle: {
     fontSize: 20,
@@ -376,6 +405,36 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     color: '#22222e',
   },
+  iconArea: {
+    width: 30,
+    height: 30,
+    marginTop: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
+const menuOptionsStyles = {
+  optionsContainer: {
+    backgroundColor: '#e0a16d',
+    padding: 10,
+    borderRadius: 8,
+  },
+  optionWrapper: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#22222e',
+  },
+  optionText: {
+    fontSize: 16,
+    color: '#22222e',
+  },
+};
+
+const menuTriggerStyles = {
+  triggerTouchable: {
+    activeOpacity: 1,
+  },
+};
 
 export default HomeScreen;

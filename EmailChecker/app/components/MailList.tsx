@@ -48,10 +48,13 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
           </TouchableOpacity>
         </View>
         <SafeAreaView style={styles.container}>
-          <View>
+          <View style={styles.mainView}>
             <Text style={styles.content}>IMAP: {credentials.imap}</Text>
             <Text style={styles.content}>Email: {credentials.email}</Text>
-            <Text style={styles.content}>Password: {credentials.password}</Text>
+            {/*<Text style={styles.content}>Password: {credentials.password}</Text>*/}
+            <TouchableOpacity style={styles.checkButton}>
+              <Text style={styles.buttonText}>Check</Text>
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </DrawerLayoutAndroid>
@@ -79,11 +82,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#24242e',
   },
+  mainView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   content: {
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: 'Roboto',
     color: '#e0a16d',
-    margin: 10,
     marginBottom: 0,
   },
   drawerOutContainer: {
@@ -117,6 +124,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto',
     color: '#22222e',
     textAlign: 'center',
+  },
+  checkButton: {
+    width: 100,
+    height: 40,
+    backgroundColor: '#e0a16d',
+    padding: 9,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 15,
+    fontFamily: 'Roboto',
+    color: '#22222e',
+    textAlign: 'center',
+    textTransform: 'uppercase',
   },
 });
 
