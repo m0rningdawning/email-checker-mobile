@@ -41,25 +41,25 @@ const DrawerMenu = ({navigation}: DrawerMenuProps) => {
     <View style={styles.menuButtonContainer}>
       <TouchableOpacity style={styles.button} onPress={() => navigate(1)}>
         <View style={styles.icon}>
-          <Icon name="home" size={30} color="#a0724d" />
+          <Icon name="home" size={30} color="#e0a16d" />
         </View>
         <Text style={styles.buttonText}>Home</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigate(2)}>
         <View style={styles.icon}>
-          <Icon name="pencil" size={30} color="#a0724d" />
+          <Icon name="pencil" size={30} color="#e0a16d" />
         </View>
         <Text style={styles.buttonText}>Create Config</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigate(3)}>
         <View style={styles.icon}>
-          <Icon name="gear" size={30} color="#a0724d" />
+          <Icon name="gear" size={30} color="#e0a16d" />
         </View>
         <Text style={styles.buttonText}>Settings</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigate(4)}>
         <View style={styles.icon}>
-          <Icon name="question" size={30} color="#a0724d" />
+          <Icon name="question" size={30} color="#e0a16d" />
         </View>
         <Text style={styles.buttonText}>About</Text>
       </TouchableOpacity>
@@ -70,7 +70,7 @@ const DrawerMenu = ({navigation}: DrawerMenuProps) => {
 const styles = StyleSheet.create({
   menuButtonContainer: {
     flex: 1,
-    backgroundColor: '#a0724d',
+    backgroundColor: '#e0a16d',
     padding: 8,
   },
   button: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   buttonText: {
-    color: '#a0724d',
+    color: '#e0a16d',
     fontSize: 20,
     marginLeft: 10,
   },
