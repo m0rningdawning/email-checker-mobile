@@ -8,5 +8,8 @@ React Native app to that checks unread emails using Imap protocol.
 <img src="https://github.com/m0rningdawning/email-checker-mobile/assets/102054245/e1348858-4ef1-4e2f-965d-45260cfd7f9f" width="250" height="550">
 <img src="https://github.com/m0rningdawning/email-checker-mobile/assets/102054245/c4519dba-5eeb-4589-be52-d686f481671b" width="250" height="550">  
 
+## NodeJS backend  
+- https://github.com/m0rningdawning/ec-mobile-backend
+
 ## Simpler PC version  
 - https://github.com/m0rningdawning/email-checker
