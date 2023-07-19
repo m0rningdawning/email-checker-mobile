@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DrawerMenu from './Drawer';
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Text,
   View,
+  Alert,
+  ActivityIndicator,
   SafeAreaView,
   DrawerLayoutAndroid,
   Platform,
@@ -20,13 +22,62 @@ type MailListScreenProps = {
 
 const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
   const drawerRef = useRef<DrawerLayoutAndroid>(null);
-  
+
   const {credentials} = route.params;
 
   const navigationView = <DrawerMenu navigation={navigation} />;
 
+  const [loading, setLoading] = useState(false);
+
   const openDrawer = () => {
     drawerRef.current?.openDrawer();
+  };
+
+  const isServerAvailable = async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch('http://192.168.0.27:3000/', {
+        method: 'HEAD',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      return response.status === 200;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  const fetchDataFromServer = async () => {
+    setLoading(true);
+    const isAvailable = await isServerAvailable();
+    setLoading(false);
+
+    if (!isAvailable) {
+      Alert.alert(
+        'Server is Down',
+        'The server is currently unavailable. Please try again later.',
+      );
+      return;
+    }
+
+    try {
+      const response = await fetch('http://192.168.0.27:3000/');
+
+      if (response.ok) {
+        console.log('Connection established successfully!');
+        Alert.alert('Connection established successfully!');
+      } else {
+        console.log('No response from the server!');
+        Alert.alert('Error', 'No response from the server.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while connecting to the server.');
+      console.error(error);
+    }
   };
 
   const mainScreen = () => {
@@ -52,9 +103,19 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
             <Text style={styles.content}>IMAP: {credentials.imap}</Text>
             <Text style={styles.content}>Email: {credentials.email}</Text>
             {/*<Text style={styles.content}>Password: {credentials.password}</Text>*/}
-            <TouchableOpacity style={styles.checkButton}>
-              <Text style={styles.buttonText}>Check</Text>
-            </TouchableOpacity>
+            {loading ? (
+              <ActivityIndicator
+                style={styles.indicator}
+                size="large"
+                color="#e0a16d"
+              />
+            ) : (
+              <TouchableOpacity
+                onPress={fetchDataFromServer}
+                style={styles.checkButton}>
+                <Text style={styles.buttonText}>Check</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </SafeAreaView>
       </DrawerLayoutAndroid>
@@ -139,6 +200,9 @@ const styles = StyleSheet.create({
     color: '#22222e',
     textAlign: 'center',
     textTransform: 'uppercase',
+  },
+  indicator: {
+    marginTop: 14,
   },
 });
 
