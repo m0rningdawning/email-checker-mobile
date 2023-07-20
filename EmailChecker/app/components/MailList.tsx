@@ -51,10 +51,13 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
     }
   };
 
-  const fetchDataFromServer = async () => {
+  const fetchDataFromServer = async (credentials: any) => {
     setLoading(true);
     const isAvailable = await isServerAvailable();
     setLoading(false);
+
+    // Fix the error with credential object creation!!!
+    console.log(credentials.imap);
 
     if (!isAvailable) {
       Alert.alert(
@@ -65,14 +68,21 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
     }
 
     try {
-      const response = await fetch('http://192.168.0.27:3000/');
+      const response = await fetch('http://192.168.0.27:3000/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
 
       if (response.ok) {
-        console.log('Connection established successfully!');
-        Alert.alert('Connection established successfully!');
+        const data = await response.json();
+        console.log('Unread Emails Count:', data.count);
+        Alert.alert('Info', `You have ${data.count} unread emails.`);
       } else {
-        console.log('No response from the server!');
-        Alert.alert('Error', 'No response from the server.');
+        console.log('Server Error/Incorrect Credentials');
+        Alert.alert('Error', 'Server Error/Incorrect Credentials');
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred while connecting to the server.');

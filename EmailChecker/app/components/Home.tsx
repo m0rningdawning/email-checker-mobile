@@ -12,7 +12,7 @@ import {
   MenuProvider,
 } from 'react-native-popup-menu';
 import DrawerMenu from './Drawer';
-import {fetchEmails} from '../ImapClient.js';
+//import {fetchEmails} from '../ImapClient.js';
 
 import {
   StyleSheet,
