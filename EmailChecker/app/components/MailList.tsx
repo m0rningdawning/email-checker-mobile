@@ -56,7 +56,7 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
     const isAvailable = await isServerAvailable();
     setLoading(false);
 
-    // Fix the error with credential object creation!!!
+    // Fix the error with credential object creation!!
     console.log(credentials.imap);
 
     if (!isAvailable) {
