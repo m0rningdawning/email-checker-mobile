@@ -46,7 +46,7 @@ function ConfigForm({onSaveConfig}: ConfigFormProps) {
         style={styles.input}
         onChangeText={setEmail}
         value={email}
-        placeholder="Email address"
+        placeholder="Username"
         placeholderTextColor={'#e0a16d'}
       />
       <TextInput

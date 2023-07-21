@@ -56,6 +56,9 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
     const isAvailable = await isServerAvailable();
     setLoading(false);
 
+    // Fix the error with credential object creation!
+    //console.log(credentials.imap);
+
     if (!isAvailable) {
       Alert.alert(
         'Server is Down',
@@ -65,14 +68,23 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
     }
 
     try {
-      const response = await fetch('http://192.168.0.27:3000/');
+      const response = await fetch('http://192.168.0.27:3000/get-emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
 
       if (response.ok) {
-        console.log('Connection established successfully!');
-        Alert.alert('Connection established successfully!');
+        const data = await response.json();
+        if ('message' in data) {
+          console.log(data.message);
+          Alert.alert('Info', data.message);
+        }
       } else {
-        console.log('No response from the server!');
-        Alert.alert('Error', 'No response from the server.');
+        console.log('Server Error/Incorrect Credentials');
+        Alert.alert('Error', 'Server Error/Incorrect Credentials');
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred while connecting to the server.');
@@ -101,7 +113,7 @@ const MailListScreen: React.FC<MailListScreenProps> = ({navigation, route}) => {
         <SafeAreaView style={styles.container}>
           <View style={styles.mainView}>
             <Text style={styles.content}>IMAP: {credentials.imap}</Text>
-            <Text style={styles.content}>Email: {credentials.email}</Text>
+            <Text style={styles.content}>Username: {credentials.email}</Text>
             {/*<Text style={styles.content}>Password: {credentials.password}</Text>*/}
             {loading ? (
               <ActivityIndicator
